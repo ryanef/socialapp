@@ -1,0 +1,158 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  getMyTimeline(limit: Int!, nextToken: String): PostsPage!
+  getImageUploadUrl(extension: String, contentType: String): AWSURL!
+  #look at authed user and get myProf
+  getMyProfile: MyProfile!
+  getProfile(screenname: String!): OtherProfile!
+
+  # limit is for how many posts to display per page & nextToken for pagination
+  getPosts(userId: ID!, limit: Int!, nextToken: String): PostsPage!
+
+  getLikes(userId: ID!, limit: Int!, nextToken: String): PostsPage!
+
+  getFollowers(userId: ID!, limit: Int!, nextToken: String): ProfilesPage
+  getFollowing(userId: ID!, limit: Int!, nextToken: String): ProfilesPage
+}
+
+type Mutation {
+  #After submit edit, it should return a new profile
+  editMyProfile(newProfile: ProfileInput!): MyProfile!
+
+  post(text: String!): Post!
+
+  #there's no void in GraphQL so return Boolean
+  like(postId: ID!): Boolean!
+  unlike(postId: ID!): Boolean!
+
+  reply(tweetId: ID!, text: String!): Reply!
+
+  follow(userId: ID!): Boolean!
+  unfollow(userId: ID!): Boolean!
+}
+
+#instead of passing these as arguments directly in Mutation
+input ProfileInput {
+  name: String!
+  imageURL: AWSURL
+  backgroundImageURL: AWSURL
+  bio: String
+  location: String
+  website: AWSURL
+  birthdate: AWSDate
+}
+
+type MyProfile {
+  id: ID!
+  name: String!
+  screenname: String!
+  imageURL: AWSURL
+  backgroundImageURL: AWSURL
+  bio: String
+  location: String
+  birthdate: AWSDate
+  createdAt: AWSDateTime!
+  followersCount: Int!
+  followingCount: Int!
+  posts: PostsPage!
+  likesCount: Int!
+  bulletins: Int!
+}
+
+interface IProfile {
+  id: ID!
+  name: String!
+  screenname: String!
+  imageURL: AWSURL
+  backgroundImageURL: AWSURL
+  bio: String
+  location: String
+  birthdate: AWSDate
+  createdAt: AWSDateTime!
+  followersCount: Int!
+  followingCount: Int!
+  posts: PostsPage!
+  likesCount: Int!
+  bulletins: Int!
+}
+
+interface IPost {
+  id: ID!
+  profile: IProfile!
+  createdAt: AWSDateTime!
+}
+type MyProfile implements IProfile {
+  id: ID!
+  name: String!
+  screenname: String!
+  imageURL: AWSURL
+  backgroundImageURL: AWSURL
+  bio: String
+  location: String
+  birthdate: AWSDate
+  createdAt: AWSDateTime!
+  followersCount: Int!
+  followingCount: Int!
+  posts: PostsPage!
+  likesCount: Int!
+  bulletins: Int!
+}
+
+type OtherProfile implements IProfile {
+  id: ID!
+  name: String!
+  screenname: String!
+  imageURL: AWSURL
+  backgroundImageURL: AWSURL
+  bio: String
+  location: String
+  birthdate: AWSDate
+  createdAt: AWSDateTime!
+  followersCount: Int!
+  followingCount: Int!
+  posts: PostsPage!
+  likesCount: Int!
+  bulletins: Int!
+  # only diff between My and OtherProfile
+  following: Boolean!
+  followedBy: Boolean!
+}
+
+type Post implements IPost {
+  id: ID!
+  profile: IProfile!
+  createdAt: AWSDateTime!
+}
+
+type Reply implements IPost {
+  id: ID!
+  profile: IProfile!
+  inReplyToPost: IPost!
+  inReplyToUser: IProfile!
+  createdAt: AWSDateTime!
+  text: String!
+  replies: Int!
+  likes: Int!
+  liked: Boolean!
+}
+type PostsPage {
+  posts: [IPost!]
+  nextToken: String
+}
+
+type ProfilesPage {
+  profiles: [IProfile!]
+  nextToken: String
+}
+
+type Bulletin {
+  id: ID!
+  title: String!
+  content: String!
+  createdAt: AWSDateTime!
+  likes: Int!
+}
