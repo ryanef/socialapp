@@ -74,7 +74,6 @@ const we_invoke_an_appsync_template = (templatePath, context) => {
   });
   return JSON.parse(compiler.render(context));
 };
-
 const a_user_calls_getMyProfile = async (user) => {
   const getMyProfile = `
   query MyQuery {
@@ -87,12 +86,9 @@ const a_user_calls_getMyProfile = async (user) => {
       followingCount
       id
       imageURL
-     
       location
       name
       screenname
-
-
     }
   }
   `;

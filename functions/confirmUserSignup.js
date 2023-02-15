@@ -22,8 +22,6 @@ module.exports.handler = async (event) => {
       createdAt: new Date().toJSON(),
       followersCount: 0,
       followingCount: 0,
-      postsCount: 0,
-      likesCounts: 0,
     };
     await DocumentClient.put({
       TableName: "rallispace-dev-UsersTable-TAI0KMXD2TZ8",

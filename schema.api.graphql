@@ -76,7 +76,6 @@ interface IProfile {
   followersCount: Int!
   followingCount: Int!
   posts: PostsPage!
-  likesCount: Int!
   bulletins: Int!
 }
 
@@ -98,7 +97,6 @@ type MyProfile implements IProfile {
   followersCount: Int!
   followingCount: Int!
   posts: PostsPage!
-  likesCount: Int!
   bulletins: Int!
 }
 
@@ -115,7 +113,6 @@ type OtherProfile implements IProfile {
   followersCount: Int!
   followingCount: Int!
   posts: PostsPage!
-  likesCount: Int!
   bulletins: Int!
   # only diff between My and OtherProfile
   following: Boolean!
