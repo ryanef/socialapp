@@ -50,6 +50,21 @@ const we_invoke_getImageUploadUrl = async (
   return await handler(event, context);
 };
 
+const we_invoke_post = async (username, text) => {
+  //this will construct event payload
+  const handler = require("../../functions/post").handler;
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      text,
+    },
+  };
+
+  //invoke the handler function with what lambda would expect
+  return await handler(event, context);
+};
+
 const a_user_signs_up = async (password, name, email) => {
   const cognito = new AWS.CognitoIdentityServiceProvider();
 
@@ -190,4 +205,5 @@ module.exports = {
   a_user_calls_editMyProfile,
   we_invoke_getImageUploadUrl,
   a_user_calls_getImageUploadUrl,
+  we_invoke_post,
 };

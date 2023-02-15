@@ -36,6 +36,23 @@ functions:
           - s3:PutObject
           - s3:PutObjectACL
         Resource: !Sub ${AssetsBucket.Arn}/*
+  post:
+    handler: functions/post.handler
+    environment:
+      USERS_TABLE: !Ref UsersTable
+      POSTS_TABLE: !Ref PostsTable
+      TIMELINES_TABLE: !Ref TimelinesTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: !GetAtt UsersTable.Arn
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource:
+          - !GetAtt TimelinesTable.Arn
+          - !GetAtt PostsTable.Arn
 
 package:
   exclude:
@@ -50,6 +67,53 @@ custom:
 
 resources:
   Resources:
+    PostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: creator
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: byCreator
+            KeySchema:
+              - AttributeName: creator
+                KeyType: HASH
+              - AttributeName: id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        Tags:
+          - Key: Environment
+            Value: ${self:custom.stage}
+          - Key: Name
+            Value: posts-table
+
+    TimelinesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: postId
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: postId
+            AttributeType: S
+        Tags:
+          - Key: Environment
+            Value: ${self:custom.stage}
+          - Key: Name
+            Value: timelines-table
+
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:

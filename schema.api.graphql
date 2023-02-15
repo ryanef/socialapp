@@ -29,7 +29,7 @@ type Mutation {
   like(postId: ID!): Boolean!
   unlike(postId: ID!): Boolean!
 
-  reply(tweetId: ID!, text: String!): Reply!
+  reply(postId: ID!, text: String!): Reply!
 
   follow(userId: ID!): Boolean!
   unfollow(userId: ID!): Boolean!
@@ -123,6 +123,8 @@ type Post implements IPost {
   id: ID!
   profile: IProfile!
   createdAt: AWSDateTime!
+  text: String!
+  likes: Int!
 }
 
 type Reply implements IPost {

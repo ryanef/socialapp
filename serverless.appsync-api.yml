@@ -20,6 +20,11 @@ mappingTemplates:
   - type: Mutation
     field: editMyProfile
     dataSource: usersTable
+  - type: Mutation
+    field: post
+    dataSource: postFunction
+    request: false
+    response: false
 
 dataSources:
   - type: NONE
@@ -32,3 +37,7 @@ dataSources:
     name: imageURLfunction
     config:
       functionName: imageUploadURL
+  - type: AWS_LAMBDA
+    name: postFunction
+    config:
+      functionName: post
