@@ -176,6 +176,30 @@ const a_user_calls_editMyProfile = async (user, input) => {
   return profile;
 };
 
+const a_user_calls_post = async (user, text) => {
+  const post = `mutation post($text: String!) {
+    post(text: $text){
+      text
+      likes
+      replies
+    }
+  }`;
+  const variables = {
+    text,
+  };
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    post,
+    variables,
+    user.accessToken
+  );
+  const newPost = data.post;
+
+  console.log(`[${user.username}] - post`);
+
+  return newPost;
+};
 const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
   const getImageUploadUrl = `query getImageUploadUrl($extension: String, $contentType: String) {
     getImageUploadUrl(extension: $extension, contentType: $contentType)
@@ -206,4 +230,5 @@ module.exports = {
   we_invoke_getImageUploadUrl,
   a_user_calls_getImageUploadUrl,
   we_invoke_post,
+  a_user_calls_post,
 };

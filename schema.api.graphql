@@ -125,6 +125,7 @@ type Post implements IPost {
   createdAt: AWSDateTime!
   text: String!
   likes: Int!
+  replies: Int!
 }
 
 type Reply implements IPost {
