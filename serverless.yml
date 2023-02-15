@@ -13,8 +13,6 @@ provider:
 
 plugins:
   - serverless-appsync-plugin
-  - serverless-export-outputs
-
   - serverless-iam-roles-per-function
   - serverless-export-env
 
@@ -27,6 +25,17 @@ functions:
       - Effect: Allow
         Action: dynamodb:PutItem
         Resource: !GetAtt UsersTable.Arn
+
+  imageUploadURL:
+    handler: functions/imageUploadURL.handler
+    environment:
+      BUCKETNAME: !Ref AssetsBucket
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:PutObjectACL
+        Resource: !Sub ${AssetsBucket.Arn}/*
 
 package:
   exclude:
@@ -65,6 +74,21 @@ resources:
             Value: ${self:custom.stage}
           - Key: Name
             Value: users-table
+
+    AssetsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccelerateConfiguration:
+          AccelerationStatus: Enabled
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+                - GET
+                - PUT
+              AllowedOrigins:
+                - "*"
+              AllowedHeaders:
+                - "*"
 
     CognitoUserPool:
       Type: AWS::Cognito::UserPool

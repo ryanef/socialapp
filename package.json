@@ -10,7 +10,6 @@
     "e2e": "jest --verbose ./__tests__/test_cases/e2e",
     "test": "jest --verbose ./__tests__/test_cases/unit --silent",
     "dev": "vite",
-    "serverless-export-outputs": "serverless-export-outputs",
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
@@ -53,6 +52,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.1",
-    "react-router-dom": "6.4.1"
+    "react-router-dom": "6.4.1",
+    "ulid": "^2.3.0"
   }
 }

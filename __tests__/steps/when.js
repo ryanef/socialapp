@@ -30,6 +30,25 @@ const we_invoke_confirmUserSignup = async (username, name, email) => {
   //invoke the handler function with what lambda would expect
   await handler(event, context);
 };
+const we_invoke_getImageUploadUrl = async (
+  username,
+  extension,
+  contentType
+) => {
+  //this will construct event payload
+  const handler = require("../../functions/imageUploadURL").handler;
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      extension,
+      contentType,
+    },
+  };
+
+  //invoke the handler function with what lambda would expect
+  return await handler(event, context);
+};
 
 const a_user_signs_up = async (password, name, email) => {
   const cognito = new AWS.CognitoIdentityServiceProvider();
@@ -105,9 +124,70 @@ const a_user_calls_getMyProfile = async (user) => {
   console.log(`${user.username} - fetched profile`);
   return profile;
 };
+
+const a_user_calls_editMyProfile = async (user, input) => {
+  const editMyProfile = `
+  mutation editMyProfile($input: ProfileInput!) {
+    editMyProfile(newProfile: $input) {
+      bio
+      birthdate
+      backgroundImageURL
+      createdAt
+      followersCount
+      followingCount
+      id
+      imageURL
+      location
+      name
+      screenname
+    }
+  }
+  `;
+
+  const variables = {
+    input,
+  };
+
+  //needs queries, auth headers, etc..
+  const data = await GraphQL(
+    process.env.API_URL,
+    editMyProfile,
+    variables,
+    user.accessToken
+  );
+
+  const profile = data.editMyProfile;
+  console.log(`${user.username} - edited profile`);
+  return profile;
+};
+
+const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
+  const getImageUploadUrl = `query getImageUploadUrl($extension: String, $contentType: String) {
+    getImageUploadUrl(extension: $extension, contentType: $contentType)
+  }`;
+  const variables = {
+    extension,
+    contentType,
+  };
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getImageUploadUrl,
+    variables,
+    user.accessToken
+  );
+  const url = data.getImageUploadUrl;
+
+  console.log(`[${user.username}] - got image upload url`);
+
+  return url;
+};
 module.exports = {
   we_invoke_confirmUserSignup,
   a_user_signs_up,
   we_invoke_an_appsync_template,
   a_user_calls_getMyProfile,
+  a_user_calls_editMyProfile,
+  we_invoke_getImageUploadUrl,
+  a_user_calls_getImageUploadUrl,
 };

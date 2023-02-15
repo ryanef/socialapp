@@ -10,6 +10,12 @@ mappingTemplates:
   - type: Query
     field: getMyProfile
     dataSource: usersTable
+  - type: Query
+    field: getImageUploadUrl
+    dataSource: imageURLfunction
+    # could  use vtl files but use false req and res because of lambda integration is direct with appsync
+    request: false
+    response: false
 
   - type: Mutation
     field: editMyProfile
@@ -22,3 +28,7 @@ dataSources:
     name: usersTable
     config:
       tableName: !Ref UsersTable
+  - type: AWS_LAMBDA
+    name: imageURLfunction
+    config:
+      functionName: imageUploadURL
